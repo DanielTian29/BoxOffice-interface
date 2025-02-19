@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args){
         DatabaseConnection dbconnect = new DatabaseConnection();
-        //dbconnect.connectToDatabase();
+        dbconnect.connectToDatabase();
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please select what you would like from the following" +
