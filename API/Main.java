@@ -1,5 +1,6 @@
 package API;
 
+import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
@@ -17,6 +18,23 @@ public class Main {
         if (response == "1") {
             option1();
         }
+        if (response == "2"){
+            System.out.println("Please pick which venue you'd like to look at (typed as one word):\n Main Hall \n Small Hall");
+            String reply = (scanner.nextLine()).toLowerCase();
+            if (reply == "mainhall"){
+                option2(getMainHallID());
+            } else if (reply == "smallhall") {
+                option2(getSmallHallID());
+            }
+        }
+    }
+    public static int getMainHallID() throws SQLException{
+        DatabaseConnection connection = new DatabaseConnection();
+        return connection.getSmallHallID();
+    }
+    public static int getSmallHallID() throws SQLException{
+        DatabaseConnection connection = new DatabaseConnection();
+        return connection.getMainHallID();
     }
     public static void option1() throws SQLException {
         DatabaseConnection connection = new DatabaseConnection();
@@ -31,18 +49,24 @@ public class Main {
                     if (event.getVenueId() == venue.getVenueID()) {
                         String startTimeFormatted = event.getStartTime().format(formatter);
                         String endTimeFormatted = event.getEndTime().format(formatter);
-                        System.out.println("Event: " + event.getName() + " starts at: " + startTimeFormatted +
-                                "and ends at: " + endTimeFormatted);
+                        System.out.println("Event: " + event.getName() + " With the ID " +
+                                event.getEventId() + " starts at: " + startTimeFormatted +
+                                "and ends at: " + endTimeFormatted + "\n");
                     }
                 }
             }else {
-            System.out.println("Venue " + venue.getName() + "has not been booked");
+            System.out.println("Venue " + venue.getName() + "has not been booked \n");
             }
         }
+        venues = null;
+        events = null;
     }
-    public static void option2() throws SQLException{
+    public static void option2(int eventID) throws SQLException{
         DatabaseConnection connection = new DatabaseConnection();
-        List<Venue> venues = connection.getListOfVenues();
-        List<Event> events = connection.getListOfEvents();
+        List<Seat> seats = connection.getAvailableSeats(eventID);
+        System.out.println("The following seats are free: ");
+        for (Seat seat: seats) {
+            System.out.println("Seat number: " + seat.getSeatNumber() + "\n Seat row: " + seat.getRow());
+        }
     }
 }
