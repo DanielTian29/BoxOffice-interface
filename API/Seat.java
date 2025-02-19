@@ -9,10 +9,9 @@ public class Seat {
     private Boolean booked;
     private Guest guest;
 
-    public Seat(int seatId, int venueId, int guestID, String seatNumber, String row, Boolean booked){
+    public Seat(int seatId, int venueId, String seatNumber, String row, Boolean booked){
         this.seatId = seatId;
         this.venueId = venueId;
-        this.guestID = guestID;
         this.seatNumber = seatNumber;
         this.row = row;
         this.booked = booked;
