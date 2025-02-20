@@ -9,10 +9,11 @@ import java.util.List;
 import java.util.SortedMap;
 
 public class Main {
+    //main function, allows you to interact with the interface
     public static void main(String[] args) throws SQLException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please select what you would like from the following " +
-                "options:\n 1.Daily Report \n 2.Get venue \n 3.Get seating info for an event");
+                "options:\n 1.Daily Report \n 2.Get venue information \n 3.Get seating info for an event");
         String response = scanner.nextLine();
         while (!response.equals("stop")) {
 
@@ -36,25 +37,27 @@ public class Main {
                 System.out.println("HI");
             }
             System.out.println("Please select what you would like from the following " +
-                    "options:\n 1.Daily Report \n 2.Get venue \n 3.Get seating info for an event \n 4.Get seat pricing");
+                    "options:\n 1.Daily Report \n 2.Get venue information \n 3.Get seating info for an event \n 4.Get seat pricing");
             response = scanner.nextLine();
         }
     }
+    //gets the ID for the main hall
     public static int getMainHallID() throws SQLException{
         DatabaseConnection connection = new DatabaseConnection();
         return connection.getSmallHallID();
     }
+    //gets the ID for the small hall
     public static int getSmallHallID() throws SQLException{
         DatabaseConnection connection = new DatabaseConnection();
         return connection.getMainHallID();
     }
-
+    //gets the daily report
     public static void option1() throws SQLException{
         System.out.println("Here's the Daily report: ");
         DatabaseConnection connection = new DatabaseConnection();
         connection.getTodayEventsWithAvailableSeating();
     }
-
+    //gets all the information on venues, whats booked for when
     public static void option2() throws SQLException {
         DatabaseConnection connection = new DatabaseConnection();
         List<Venue> venues = connection.getListOfVenues();
@@ -80,6 +83,7 @@ public class Main {
         venues = null;
         events = null;
     }
+    //gets all the available seats $ price for the event you're looking for
     public static void option3(int eventID) throws SQLException{
         DatabaseConnection connection = new DatabaseConnection();
         List<Seat> seats = connection.getAvailableSeats(eventID);
@@ -88,8 +92,5 @@ public class Main {
             System.out.println("Seat number: " + seat.getSeatNumber() + "\n Seat row: " + seat.getRow());
         }
         seats = null;
-    }
-    public static void option4() throws SQLException{
-
     }
 }

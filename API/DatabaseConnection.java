@@ -5,19 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseConnection {
+    //way to connect to the database
     public Connection connectToDatabase() {
-        String url = "jdbc:mysql://sst-stuproj.city.ac.uk:3306/in2033t08"; // Update with your actual database name
-        String user = "in2033t08_a"; // Update with your MySQL username
-        String password = "1rHVxHi7gR8"; // Update with your MySQL password
+        String url = "jdbc:mysql://sst-stuproj.city.ac.uk:3306/in2033t08";
+        String user = "";
+        String password = "";
         try {
             return DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
             System.err.println("Connection failed: " + e.getMessage());
-            return null; // or handle it in another way, such as rethrowing a custom exception
+            return null;
         }
     }
-
-
+    //access the database to get all info on venues
     public List<Venue> getListOfVenues() throws SQLException {
         List<Venue> venues = new ArrayList<>();
         String sql = "SELECT * FROM Venues";
@@ -40,11 +40,10 @@ public class DatabaseConnection {
         }
         return venues;
     }
-
-
+    // get all data on events from the database
     public List<Event> getListOfEvents() throws SQLException {
         List<Event> events = new ArrayList<>();
-        String sql = "SELECT event_id, venue_id, name, start_time, end_time FROM Events WHERE start_time >= NOW() ORDER BY Start_time ASC";
+        String sql = "SELECT * FROM Events WHERE start_time >= NOW() ORDER BY Start_time ASC";
         try (Connection conn = connectToDatabase();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
@@ -69,7 +68,7 @@ public class DatabaseConnection {
         }
         return events;
     }
-
+    //get all available seats for an event
     public List<Seat> getAvailableSeats(int eventId) throws SQLException {
         List<Seat> availableSeats = new ArrayList<>();
         String sql = "SELECT s.* FROM Seats s JOIN Events e ON s.venue_id = e.venue_id " +
@@ -100,7 +99,7 @@ public class DatabaseConnection {
         }
         return availableSeats;
     }
-
+    //get the main hall ID
     public int getMainHallID() throws SQLException {
         int mainHallID = -1;
         String sql = "SELECT venue_ID FROM Venues WHERE name = 'mainhall'";
@@ -120,7 +119,7 @@ public class DatabaseConnection {
         }
         return mainHallID;
     }
-
+    //get the small hall ID
     public int getSmallHallID() throws SQLException {
         int smallHallID = -1;
         String sql = "SELECT venue_ID FROM Venues WHERE name = 'smallhall'";
@@ -140,11 +139,7 @@ public class DatabaseConnection {
         }
         return smallHallID;
     }
-
-    public void getSeatingPrice() throws SQLException {
-
-    }
-
+    //get all the available seats and price
     public void getTodayEventsWithAvailableSeating() throws SQLException {
         String eventsSql = "SELECT id, name, start_time, end_time FROM Venues WHERE start_time >= CURRENT_DATE AND start_time < CURRENT_DATE + INTERVAL '1' DAY";
 
