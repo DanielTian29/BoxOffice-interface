@@ -9,9 +9,10 @@ public class Seat {
     private Boolean booked;
     private Guest guest;
     private boolean disabledSeating;
-    private int price;
+    private double price;
+    private Boolean restricted;
 
-    public Seat(int seatId, int venueId, String seatNumber, String row, Boolean booked, boolean disabledSeating, int price){
+    public Seat(int seatId, int venueId, String seatNumber, String row, Boolean booked, boolean disabledSeating, double price, boolean restricted){
         this.seatId = seatId;
         this.venueId = venueId;
         this.seatNumber = seatNumber;
@@ -19,6 +20,7 @@ public class Seat {
         this.booked = booked;
         this.disabledSeating = disabledSeating;
         this.price = price;
+        this.restricted = restricted;
     }
 
     public int getSeatId() { return seatId; }
@@ -29,5 +31,7 @@ public class Seat {
     public Boolean getBooked() { return booked; }
     public Guest getGuest() { return guest; }
     public boolean getIfDisabled() { return disabledSeating; }
-    public int getPrice() { return price; }
+    public double getPrice() { return price; }
+    public Boolean getRestricted() { return restricted; }
+    public void setPrice(double price) { this.price = price; }
 }

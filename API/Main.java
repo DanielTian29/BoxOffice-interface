@@ -13,7 +13,8 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please select what you would like from the following " +
-                "options:\n 1.Daily Report \n 2.Get venue information \n 3.Get seating info for an event");
+                "options:\n 1.Daily Report \n 2.Get venue information \n" +
+                "3.Get seating info for an event \n 4.Adjust the price of a seat");
         String response = scanner.nextLine();
         while (!response.equals("stop")) {
 
@@ -34,7 +35,12 @@ public class Main {
                 }
             }
             if (response.equals("4")) {
-                System.out.println("HI");
+                System.out.println("Enter the price you'd like to sell the seat for \n");
+                double d = scanner.nextDouble();
+                System.out.println("Enter the seat number you'd like to change the price for \n");
+                int i = scanner.nextInt();
+                setPriceOfSeat(d,i);
+                }
             }
             System.out.println("Please select what you would like from the following " +
                     "options:\n 1.Daily Report \n 2.Get venue information \n 3.Get seating info for an event \n 4.Get seat pricing");
@@ -57,7 +63,7 @@ public class Main {
         DatabaseConnection connection = new DatabaseConnection();
         connection.getTodayEventsWithAvailableSeating();
     }
-    //gets all the information on venues, whats booked for when
+    //gets all the information on venues, what's booked for when
     public static void option2() throws SQLException {
         DatabaseConnection connection = new DatabaseConnection();
         List<Venue> venues = connection.getListOfVenues();
@@ -89,8 +95,16 @@ public class Main {
         List<Seat> seats = connection.getAvailableSeats(eventID);
         System.out.println("The following seats are free: ");
         for (Seat seat: seats) {
-            System.out.println("Seat number: " + seat.getSeatNumber() + "\n Seat row: " + seat.getRow());
+            if (seat.getRestricted() == true) {
+                System.out.println("This seat has a restricted view, the price has been automatically adjusted, please notify the customer \n");
+            }
+            System.out.println("Seat number: " + seat.getSeatNumber() + "\n Seat row: " + seat.getRow() +" \n Seat price: " + seat.getPrice());
         }
         seats = null;
+    }
+    //adjust the price of a seat
+    public static void setPriceOfSeat(double price, int seat_number) throws SQLException{
+        DatabaseConnection connection = new DatabaseConnection();
+        connection.setSeatPrice(price, seat_number);
     }
 }

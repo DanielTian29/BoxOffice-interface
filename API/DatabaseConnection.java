@@ -87,7 +87,8 @@ public class DatabaseConnection {
                             rs.getString("row"),
                             rs.getBoolean("booked"),
                             rs.getBoolean("disabledSeating"),
-                            rs.getInt("price")
+                            rs.getInt("price"),
+                            rs.getBoolean("restricted")
                     );
                     availableSeats.add(seat);
                 }
@@ -98,46 +99,6 @@ public class DatabaseConnection {
             throw e;  // Rethrowing exception to handle it further up if necessary
         }
         return availableSeats;
-    }
-    //get the main hall ID
-    public int getMainHallID() throws SQLException {
-        int mainHallID = -1;
-        String sql = "SELECT venue_ID FROM Venues WHERE name = 'mainhall'";
-
-        try (Connection conn = connectToDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-            if (rs.next()) {
-                mainHallID = rs.getInt("venue_ID");
-            } else {
-                System.out.println("Main Hall not found in database");
-            }
-        } catch (SQLException e) {
-            System.err.println("Error in fetching the main hall ID: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-        return mainHallID;
-    }
-    //get the small hall ID
-    public int getSmallHallID() throws SQLException {
-        int smallHallID = -1;
-        String sql = "SELECT venue_ID FROM Venues WHERE name = 'smallhall'";
-
-        try (Connection conn = connectToDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-            if (rs.next()) {
-                smallHallID = rs.getInt("venue_ID");
-            } else {
-                System.out.println("Small Hall not found in database");
-            }
-        } catch (SQLException e) {
-            System.err.println("Error in fetching the small hall ID: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-        return smallHallID;
     }
     //get all the available seats and price
     public void getTodayEventsWithAvailableSeating() throws SQLException {
@@ -184,6 +145,64 @@ public class DatabaseConnection {
             e.printStackTrace();
         }
     }
+    //get the main hall ID
+    public int getMainHallID() throws SQLException {
+        int mainHallID = -1;
+        String sql = "SELECT venue_ID FROM Venues WHERE name = 'mainhall'";
+
+        try (Connection conn = connectToDatabase();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                mainHallID = rs.getInt("venue_ID");
+            } else {
+                System.out.println("Main Hall not found in database");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error in fetching the main hall ID: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return mainHallID;
+    }
+    //get the small hall ID
+    public int getSmallHallID() throws SQLException {
+        int smallHallID = -1;
+        String sql = "SELECT venue_ID FROM Venues WHERE name = 'smallhall'";
+
+        try (Connection conn = connectToDatabase();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                smallHallID = rs.getInt("venue_ID");
+            } else {
+                System.out.println("Small Hall not found in database");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error in fetching the small hall ID: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return smallHallID;
+    }
+    //update the price of a seat
+    public void setSeatPrice(double newPrice, int venueId) throws SQLException {
+        String sql = "UPDATE Seats SET price = ? WHERE venue_id = ?";
+        try (Connection conn = connectToDatabase();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setDouble(1, newPrice); // Set the new price
+            pstmt.setInt(2, venueId); // Set the venue ID
+            int affectedRows = pstmt.executeUpdate(); // Execute the update
+
+            if (affectedRows > 0) {
+                System.out.println("Price updated successfully!");
+            } else {
+                System.out.println("Price update failed: no rows affected.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error updating price: " + e.getMessage());
+            throw e;
+        }
+    }
+
 }
-
-
