@@ -11,21 +11,33 @@ import java.util.SortedMap;
 public class Main {
     public static void main(String[] args) throws SQLException {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Please select what you would like from the following" +
-                "options:\n 1.Get venue \n 2.Get seating info for an event");
+        System.out.println("Please select what you would like from the following " +
+                "options:\n 1.Daily Report \n 2.Get venue \n 3.Get seating info for an event");
+        String response = scanner.nextLine();
+        while (!response.equals("stop")) {
 
-        String response = (scanner.nextLine()).toLowerCase();
-        if (response == "1") {
-            option1();
-        }
-        if (response == "2"){
-            System.out.println("Please pick which venue you'd like to look at (typed as one word):\n Main Hall \n Small Hall");
-            String reply = (scanner.nextLine()).toLowerCase();
-            if (reply == "mainhall"){
-                option2(getMainHallID());
-            } else if (reply == "smallhall") {
-                option2(getSmallHallID());
+            if (response.equals("1")) {
+                option1();
             }
+
+            if (response.equals("2")) {
+                option2();
+            }
+            if (response.equals("3")) {
+                System.out.println("Please pick which venue you'd like to look at (typed as one word):\n Main Hall \n Small Hall");
+                String reply = (scanner.nextLine()).toLowerCase();
+                if (reply == "mainhall") {
+                    option3(getMainHallID());
+                } else if (reply == "smallhall") {
+                    option3(getSmallHallID());
+                }
+            }
+            if (response.equals("4")) {
+                System.out.println("HI");
+            }
+            System.out.println("Please select what you would like from the following " +
+                    "options:\n 1.Daily Report \n 2.Get venue \n 3.Get seating info for an event \n 4.Get seat pricing");
+            response = scanner.nextLine();
         }
     }
     public static int getMainHallID() throws SQLException{
@@ -36,7 +48,14 @@ public class Main {
         DatabaseConnection connection = new DatabaseConnection();
         return connection.getMainHallID();
     }
-    public static void option1() throws SQLException {
+
+    public static void option1() throws SQLException{
+        System.out.println("Here's the Daily report: ");
+        DatabaseConnection connection = new DatabaseConnection();
+        connection.getTodayEventsWithAvailableSeating();
+    }
+
+    public static void option2() throws SQLException {
         DatabaseConnection connection = new DatabaseConnection();
         List<Venue> venues = connection.getListOfVenues();
         List<Event> events = connection.getListOfEvents();
@@ -61,12 +80,16 @@ public class Main {
         venues = null;
         events = null;
     }
-    public static void option2(int eventID) throws SQLException{
+    public static void option3(int eventID) throws SQLException{
         DatabaseConnection connection = new DatabaseConnection();
         List<Seat> seats = connection.getAvailableSeats(eventID);
         System.out.println("The following seats are free: ");
         for (Seat seat: seats) {
             System.out.println("Seat number: " + seat.getSeatNumber() + "\n Seat row: " + seat.getRow());
         }
+        seats = null;
+    }
+    public static void option4() throws SQLException{
+
     }
 }

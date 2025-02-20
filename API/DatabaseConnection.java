@@ -5,20 +5,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseConnection {
-    public Connection connectToDatabase() throws SQLException {
+    public Connection connectToDatabase() {
         String url = "jdbc:mysql://sst-stuproj.city.ac.uk:3306/in2033t08"; // Update with your actual database name
         String user = "in2033t08_a"; // Update with your MySQL username
         String password = "1rHVxHi7gR8"; // Update with your MySQL password
-        return DriverManager.getConnection(url, user, password);
+        try {
+            return DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            System.err.println("Connection failed: " + e.getMessage());
+            return null; // or handle it in another way, such as rethrowing a custom exception
         }
-    public List<Venue> getListOfVenues() throws SQLException{
+    }
+
+
+    public List<Venue> getListOfVenues() throws SQLException {
         List<Venue> venues = new ArrayList<>();
         String sql = "SELECT * FROM Venues";
-        try(Connection conn = connectToDatabase();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery()) {
+        try (Connection conn = connectToDatabase();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
 
-            while (rs.next()){
+            while (rs.next()) {
                 Venue venue = new Venue(
                         rs.getInt("venue_id"),
                         rs.getString("name"),
@@ -27,7 +34,7 @@ public class DatabaseConnection {
                 );
                 venues.add(venue);
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             System.err.println("Error in fetching venues: " + e.getMessage());
             e.printStackTrace();
         }
@@ -37,7 +44,7 @@ public class DatabaseConnection {
 
     public List<Event> getListOfEvents() throws SQLException {
         List<Event> events = new ArrayList<>();
-        String sql = "SELECT * FROM Events WHERE start_time >= NOW() ORDER BY Start_time ASC";
+        String sql = "SELECT event_id, venue_id, name, start_time, end_time FROM Events WHERE start_time >= NOW() ORDER BY Start_time ASC";
         try (Connection conn = connectToDatabase();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
@@ -46,6 +53,7 @@ public class DatabaseConnection {
                 Event event = new Event(
                         rs.getInt("event_id"),
                         rs.getInt("venue_id"),
+                        rs.getInt("client_id"),
                         rs.getString("name"),
                         rs.getString("description"),
                         rs.getTimestamp("start_time").toLocalDateTime(),
@@ -61,6 +69,7 @@ public class DatabaseConnection {
         }
         return events;
     }
+
     public List<Seat> getAvailableSeats(int eventId) throws SQLException {
         List<Seat> availableSeats = new ArrayList<>();
         String sql = "SELECT s.* FROM Seats s JOIN Events e ON s.venue_id = e.venue_id " +
@@ -77,7 +86,9 @@ public class DatabaseConnection {
                             rs.getInt("venue_id"),
                             rs.getString("seat_number"),
                             rs.getString("row"),
-                            rs.getBoolean("booked")
+                            rs.getBoolean("booked"),
+                            rs.getBoolean("disabledSeating"),
+                            rs.getInt("price")
                     );
                     availableSeats.add(seat);
                 }
@@ -89,43 +100,94 @@ public class DatabaseConnection {
         }
         return availableSeats;
     }
-    public int getMainHallID() throws SQLException{
+
+    public int getMainHallID() throws SQLException {
         int mainHallID = -1;
         String sql = "SELECT venue_ID FROM Venues WHERE name = 'mainhall'";
 
-        try(Connection conn = connectToDatabase();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery()) {
-            if (rs.next()){
+        try (Connection conn = connectToDatabase();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
                 mainHallID = rs.getInt("venue_ID");
-            }else {
+            } else {
                 System.out.println("Main Hall not found in database");
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.err.println("Error in fetching the main hall ID: " + e.getMessage());
             e.printStackTrace();
             throw e;
         }
         return mainHallID;
     }
-    public int getSmallHallID() throws SQLException{
+
+    public int getSmallHallID() throws SQLException {
         int smallHallID = -1;
         String sql = "SELECT venue_ID FROM Venues WHERE name = 'smallhall'";
 
-        try(Connection conn = connectToDatabase();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery()) {
-            if (rs.next()){
+        try (Connection conn = connectToDatabase();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
                 smallHallID = rs.getInt("venue_ID");
-            }else {
+            } else {
                 System.out.println("Small Hall not found in database");
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.err.println("Error in fetching the small hall ID: " + e.getMessage());
             e.printStackTrace();
             throw e;
         }
         return smallHallID;
+    }
+
+    public void getSeatingPrice() throws SQLException {
+
+    }
+
+    public void getTodayEventsWithAvailableSeating() throws SQLException {
+        String eventsSql = "SELECT id, name, start_time, end_time FROM Venues WHERE start_time >= CURRENT_DATE AND start_time < CURRENT_DATE + INTERVAL '1' DAY";
+
+        try (Connection conn = connectToDatabase();
+             PreparedStatement eventsStmt = conn.prepareStatement(eventsSql);
+             ResultSet eventsRs = eventsStmt.executeQuery()) {
+
+            if (!eventsRs.isBeforeFirst()) {
+                System.out.println("No events found for today.");
+            } else {
+                while (eventsRs.next()) {
+                    // Print event information
+                    int eventId = eventsRs.getInt("id");
+                    String name = eventsRs.getString("name");
+                    Time startTime = eventsRs.getTime("start_time");
+                    Time endTime = eventsRs.getTime("end_time");
+
+                    System.out.printf("\nEvent: %s\nStart Time: %s\nEnd Time: %s\n", name, startTime, endTime);
+
+                    // Query to get available seats and their prices for the current event
+                    String seatsSql = "SELECT seat_number, row, price FROM Seats WHERE venue_id = ? AND booked = false";
+                    try (PreparedStatement seatsStmt = conn.prepareStatement(seatsSql)) {
+                        seatsStmt.setInt(1, eventId);
+                        try (ResultSet seatsRs = seatsStmt.executeQuery()) {
+                            if (!seatsRs.isBeforeFirst()) {
+                                System.out.println("No available seats for this event.");
+                            } else {
+                                System.out.println("Available Seats:");
+                                while (seatsRs.next()) {
+                                    String seatNumber = seatsRs.getString("seat_number");
+                                    String row = seatsRs.getString("row");
+                                    double price = seatsRs.getDouble("price");
+                                    System.out.printf("Seat Number: %s, Row: %s, Price: £%.2f\n", seatNumber, row, price);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Database access error:");
+            e.printStackTrace();
+        }
     }
 }
 

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class Event {
     private final int eventId;
     private final int venueId;
+    private final int clientID;
     private final String name;
     private final String description;
     private final LocalDateTime startTime;
@@ -12,10 +13,11 @@ public class Event {
     private final int length;  // Length in minutes
 
     // Constructor
-    public Event(int eventId, int venueId, String name, String description,
+    public Event(int eventId, int venueId, int clientID, String name, String description,
                  LocalDateTime startTime, LocalDateTime endTime, int length) {
         this.eventId = eventId;
         this.venueId = venueId;
+        this.clientID = clientID;
         this.name = name;
         this.description = description;
         this.startTime = startTime;
