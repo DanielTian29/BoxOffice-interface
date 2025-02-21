@@ -46,7 +46,6 @@ public class Main {
                     "options:\n 1.Daily Report \n 2.Get venue information \n 3.Get seating info for an event \n 4.Get seat pricing");
             response = scanner.nextLine();
         }
-    }
     //gets the ID for the main hall
     public static int getMainHallID() throws SQLException{
         DatabaseConnection connection = new DatabaseConnection();
