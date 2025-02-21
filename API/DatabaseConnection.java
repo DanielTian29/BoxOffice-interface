@@ -22,8 +22,8 @@ public class DatabaseConnection {
         List<Venue> venues = new ArrayList<>();
         String sql = "SELECT * FROM Venues";
         try (Connection conn = connectToDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+             PreparedStatement p = conn.prepareStatement(sql);
+             ResultSet rs = p.executeQuery()) {
 
             while (rs.next()) {
                 Venue venue = new Venue(
@@ -45,8 +45,8 @@ public class DatabaseConnection {
         List<Event> events = new ArrayList<>();
         String sql = "SELECT * FROM Events WHERE start_time >= NOW() ORDER BY Start_time ASC";
         try (Connection conn = connectToDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+             PreparedStatement p = conn.prepareStatement(sql);
+             ResultSet rs = p.executeQuery()) {
 
             while (rs.next()) {
                 Event event = new Event(
@@ -72,13 +72,13 @@ public class DatabaseConnection {
     public List<Seat> getAvailableSeats(int eventId) throws SQLException {
         List<Seat> availableSeats = new ArrayList<>();
         String sql = "SELECT s.* FROM Seats s JOIN Events e ON s.venue_id = e.venue_id " +
-                "WHERE e.event_id = ? AND s.booked = FALSE ORDER BY s.row, s.seat_number ASC";
+                "WHERE e.event_id = ? ORDER BY s.row, s.seat_number ASC";
 
         try (Connection conn = connectToDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement p = conn.prepareStatement(sql)) {
 
-            pstmt.setInt(1, eventId);
-            try (ResultSet rs = pstmt.executeQuery()) {
+            p.setInt(1, eventId);
+            try (ResultSet rs = p.executeQuery()) {
                 while (rs.next()) {
                     Seat seat = new Seat(
                             rs.getInt("seat_id"),
@@ -151,8 +151,8 @@ public class DatabaseConnection {
         String sql = "SELECT venue_ID FROM Venues WHERE name = 'mainhall'";
 
         try (Connection conn = connectToDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+             PreparedStatement p = conn.prepareStatement(sql);
+             ResultSet rs = p.executeQuery()) {
             if (rs.next()) {
                 mainHallID = rs.getInt("venue_ID");
             } else {
@@ -171,8 +171,8 @@ public class DatabaseConnection {
         String sql = "SELECT venue_ID FROM Venues WHERE name = 'smallhall'";
 
         try (Connection conn = connectToDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+             PreparedStatement p = conn.prepareStatement(sql);
+             ResultSet rs = p.executeQuery()) {
             if (rs.next()) {
                 smallHallID = rs.getInt("venue_ID");
             } else {
@@ -189,10 +189,10 @@ public class DatabaseConnection {
     public void setSeatPrice(double newPrice, int venueId) throws SQLException {
         String sql = "UPDATE Seats SET price = ? WHERE venue_id = ?";
         try (Connection conn = connectToDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setDouble(1, newPrice); // Set the new price
-            pstmt.setInt(2, venueId); // Set the venue ID
-            int affectedRows = pstmt.executeUpdate(); // Execute the update
+             PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setDouble(1, newPrice); // Set the new price
+            p.setInt(2, venueId); // Set the venue ID
+            int affectedRows = p.executeUpdate(); // Execute the update
 
             if (affectedRows > 0) {
                 System.out.println("Price updated successfully!");

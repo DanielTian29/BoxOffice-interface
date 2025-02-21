@@ -14,7 +14,8 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please select what you would like from the following " +
                 "options:\n 1.Daily Report \n 2.Get venue information\n" +
-                " 3.Get seating info for an event \n 4.Adjust the price of a seat");
+                " 3.Get seating info for an event \n 4.Adjust the price of a seat\n" +
+                " 5.Get seat arrangement.");
         String response = scanner.nextLine();
         while (!response.equals("stop")) {
 
@@ -41,10 +42,16 @@ public class Main {
                 int i = scanner.nextInt();
                 setPriceOfSeat(d,i);
                 }
-            }
+            if (response.equals("5")) {
+                System.out.println("Please pick which event you'd like to look at (type the ID of the event");
+                int reply = scanner.nextInt();
+                System.out.println("Here is the seat arrangement for your event: \n");
+                option4(reply);
+                }
             System.out.println("Please select what you would like from the following " +
                     "options:\n 1.Daily Report \n 2.Get venue information \n 3.Get seating info for an event \n 4.Get seat pricing");
             response = scanner.nextLine();
+            }
         }
     //gets the ID for the main hall
     public static int getMainHallID() throws SQLException{
@@ -94,8 +101,26 @@ public class Main {
         List<Seat> seats = connection.getAvailableSeats(eventID);
         System.out.println("The following seats are free: ");
         for (Seat seat: seats) {
+            if (seat.getBooked() == false) {
+                if (seat.getRestricted() == true) {
+                    System.out.println("This seat has a restricted view, the price has been automatically adjusted, please notify the customer \n");
+                }
+                System.out.println("Seat number: " + seat.getSeatNumber() + "\n Seat row: " + seat.getRow() + " \n Seat price: " + seat.getPrice());
+            }
+        }
+        seats = null;
+    }
+    //get the entire seating arrangement for an event
+    public static void option4(int eventID) throws SQLException {
+        DatabaseConnection connection = new DatabaseConnection();
+        List<Seat> seats = connection.getAvailableSeats(eventID);
+        System.out.println("This is the following seating arrangement: ");
+        for (Seat seat: seats) {
             if (seat.getRestricted() == true) {
-                System.out.println("This seat has a restricted view, the price has been automatically adjusted, please notify the customer \n");
+                System.out.println("This seat has a restricted view, the price has been automatically adjusted, please notify the customer. \n");
+            }
+            if (seat.getIfDisabled() == true) {
+                System.out.println("This seat is disabled seating, please only allow the customers who need this support to book the seat. \n");
             }
             System.out.println("Seat number: " + seat.getSeatNumber() + "\n Seat row: " + seat.getRow() +" \n Seat price: " + seat.getPrice());
         }
@@ -106,4 +131,5 @@ public class Main {
         DatabaseConnection connection = new DatabaseConnection();
         connection.setSeatPrice(price, seat_number);
     }
+
 }
