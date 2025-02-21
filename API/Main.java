@@ -5,9 +5,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.List;
 
-public class Main {
+public class Main implements MainInterface {
     //main function, allows you to interact with the interface
-    public static void main(String[] args) throws SQLException {
+    @Override
+    public void main(String[] args) throws SQLException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please select what you would like from the following " +
                 "options:\n 1.Daily Report \n 2.Get venue information\n" +
@@ -51,23 +52,27 @@ public class Main {
             }
         }
     //gets the ID for the main hall
-    public static int getMainHallID() throws SQLException{
+    @Override
+    public int getMainHallID() throws SQLException{
         DatabaseConnection connection = new DatabaseConnection();
         return connection.getSmallHallID();
     }
     //gets the ID for the small hall
-    public static int getSmallHallID() throws SQLException{
+    @Override
+    public int getSmallHallID() throws SQLException{
         DatabaseConnection connection = new DatabaseConnection();
         return connection.getMainHallID();
     }
     //gets the daily report
-    public static void option1() throws SQLException{
+    @Override
+    public void option1() throws SQLException{
         System.out.println("Here's the Daily report: ");
         DatabaseConnection connection = new DatabaseConnection();
         connection.getTodayEventsWithAvailableSeating();
     }
     //gets all the information on venues, what's booked for when
-    public static void option2() throws SQLException {
+    @Override
+    public void option2() throws SQLException {
         DatabaseConnection connection = new DatabaseConnection();
         List<Venue> venues = connection.getListOfVenues();
         List<Event> events = connection.getListOfEvents();
@@ -93,7 +98,8 @@ public class Main {
         events = null;
     }
     //gets all the available seats $ price for the event you're looking for
-    public static void option3(int eventID) throws SQLException{
+    @Override
+    public void option3(int eventID) throws SQLException{
         DatabaseConnection connection = new DatabaseConnection();
         List<Seat> seats = connection.getAvailableSeats(eventID);
         System.out.println("The following seats are free: ");
@@ -108,7 +114,8 @@ public class Main {
         seats = null;
     }
     //get the entire seating arrangement for an event
-    public static void option4(int eventID) throws SQLException {
+    @Override
+    public void option4(int eventID) throws SQLException {
         DatabaseConnection connection = new DatabaseConnection();
         List<Seat> seats = connection.getAvailableSeats(eventID);
         System.out.println("This is the following seating arrangement: ");
@@ -124,7 +131,8 @@ public class Main {
         seats = null;
     }
     //adjust the price of a seat
-    public static void setPriceOfSeat(double price, int seat_number) throws SQLException{
+    @Override
+    public void setPriceOfSeat(double price, int seat_number) throws SQLException{
         DatabaseConnection connection = new DatabaseConnection();
         connection.setSeatPrice(price, seat_number);
     }
