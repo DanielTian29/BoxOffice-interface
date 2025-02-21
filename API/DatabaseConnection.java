@@ -6,7 +6,7 @@ import java.util.List;
 
 public class DatabaseConnection {
     //way to connect to the database
-    public Connection connectToDatabase() {
+    public Connection connectToDatabase() throws SQLException {
         String url = "jdbc:mysql://sst-stuproj.city.ac.uk:3306/in2033t08";
         String user = "";
         String password = "";
@@ -118,7 +118,7 @@ public class DatabaseConnection {
                     Time startTime = eventsRs.getTime("start_time");
                     Time endTime = eventsRs.getTime("end_time");
 
-                    System.out.printf("\nEvent: %s\nStart Time: %s\nEnd Time: %s\n", name, startTime, endTime);
+                    System.out.printf("\nEvent:" + name + "\nStart Time:" + startTime + "\nEnd Time: " + endTime);
 
                     // Query to get available seats and their prices for the current event
                     String seatsSql = "SELECT seat_number, row, price FROM Seats WHERE venue_id = ? AND booked = false";
@@ -133,7 +133,7 @@ public class DatabaseConnection {
                                     String seatNumber = seatsRs.getString("seat_number");
                                     String row = seatsRs.getString("row");
                                     double price = seatsRs.getDouble("price");
-                                    System.out.printf("Seat Number: %s, Row: %s, Price: £%.2f\n", seatNumber, row, price);
+                                    System.out.printf("Seat Number: " + seatNumber + ", Row: " + row + ", Price: £" + price);
                                 }
                             }
                         }

@@ -1,12 +1,9 @@
 package API;
 
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 
 public class Main {
     //main function, allows you to interact with the interface
