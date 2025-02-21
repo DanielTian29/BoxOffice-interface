@@ -13,8 +13,8 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please select what you would like from the following " +
-                "options:\n 1.Daily Report \n 2.Get venue information \n" +
-                "3.Get seating info for an event \n 4.Adjust the price of a seat");
+                "options:\n 1.Daily Report \n 2.Get venue information\n" +
+                " 3.Get seating info for an event \n 4.Adjust the price of a seat");
         String response = scanner.nextLine();
         while (!response.equals("stop")) {
 
