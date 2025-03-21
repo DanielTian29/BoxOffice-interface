@@ -11,8 +11,9 @@ public class Seat {
     private boolean disabledSeating;
     private double price;
     private Boolean restricted;
+    private Boolean VIP;
 
-    public Seat(int seatId, int venueId, String seatNumber, String row, Boolean booked, boolean disabledSeating, double price, boolean restricted){
+    public Seat(int seatId, int venueId, String seatNumber, String row, Boolean booked, boolean disabledSeating, double price, boolean restricted, boolean VIP){
         this.seatId = seatId;
         this.venueId = venueId;
         this.seatNumber = seatNumber;
@@ -21,6 +22,7 @@ public class Seat {
         this.disabledSeating = disabledSeating;
         this.price = price;
         this.restricted = restricted;
+        this.VIP = VIP;
     }
 
     public int getSeatId() { return seatId; }

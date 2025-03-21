@@ -9,8 +9,8 @@ public class DatabaseConnection implements DatabaseConnectionInterface {
     @Override
     public Connection connectToDatabase() throws SQLException {
         String url = "jdbc:mysql://sst-stuproj.city.ac.uk:3306/in2033t08";
-        String user = "";
-        String password = "";
+        String user = "in2033t08_a";
+        String password = "1rHVxHi7gR8";
         try {
             return DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
@@ -22,7 +22,7 @@ public class DatabaseConnection implements DatabaseConnectionInterface {
     @Override
     public List<Venue> getListOfVenues() throws SQLException {
         List<Venue> venues = new ArrayList<>();
-        String sql = "SELECT * FROM Venues";
+        String sql = "SELECT * FROM Venue";
         try (Connection conn = connectToDatabase();
              PreparedStatement p = conn.prepareStatement(sql);
              ResultSet rs = p.executeQuery()) {
@@ -31,8 +31,9 @@ public class DatabaseConnection implements DatabaseConnectionInterface {
                 Venue venue = new Venue(
                         rs.getInt("venue_id"),
                         rs.getString("name"),
+                        rs.getInt("capacity"),
                         rs.getBoolean("booked"),
-                        rs.getInt("capacity")
+                        rs.getInt("Event_ID")
                 );
                 venues.add(venue);
             }
@@ -46,7 +47,7 @@ public class DatabaseConnection implements DatabaseConnectionInterface {
     @Override
     public List<Event> getListOfEvents() throws SQLException {
         List<Event> events = new ArrayList<>();
-        String sql = "SELECT * FROM Events WHERE start_time >= NOW() ORDER BY Start_time ASC";
+        String sql = "SELECT * FROM EventDetails WHERE start_time >= NOW() ORDER BY Start_time ASC";
         try (Connection conn = connectToDatabase();
              PreparedStatement p = conn.prepareStatement(sql);
              ResultSet rs = p.executeQuery()) {
@@ -75,7 +76,7 @@ public class DatabaseConnection implements DatabaseConnectionInterface {
     @Override
     public List<Seat> getAvailableSeats(int eventId) throws SQLException {
         List<Seat> availableSeats = new ArrayList<>();
-        String sql = "SELECT s.* FROM Seats s JOIN Events e ON s.venue_id = e.venue_id " +
+        String sql = "SELECT s.* FROM Seat s JOIN Event e ON s.venue_id = e.venue_id " +
                 "WHERE e.event_id = ? ORDER BY s.row, s.seat_number ASC";
 
         try (Connection conn = connectToDatabase();
@@ -92,7 +93,8 @@ public class DatabaseConnection implements DatabaseConnectionInterface {
                             rs.getBoolean("booked"),
                             rs.getBoolean("disabledSeating"),
                             rs.getInt("price"),
-                            rs.getBoolean("restricted")
+                            rs.getBoolean("restricted"),
+                            rs.getBoolean("VIP")
                     );
                     availableSeats.add(seat);
                 }
@@ -107,7 +109,7 @@ public class DatabaseConnection implements DatabaseConnectionInterface {
     //get all the available seats and price
     @Override
     public void getTodayEventsWithAvailableSeating() throws SQLException {
-        String eventsSql = "SELECT id, name, start_time, end_time FROM Venues WHERE start_time >= CURRENT_DATE AND start_time < CURRENT_DATE + INTERVAL '1' DAY";
+        String eventsSql = "SELECT id, name, start_time, end_time FROM Venue WHERE start_time >= CURRENT_DATE AND start_time < CURRENT_DATE + INTERVAL '1' DAY";
 
         try (Connection conn = connectToDatabase();
              PreparedStatement eventsStmt = conn.prepareStatement(eventsSql);
@@ -154,7 +156,7 @@ public class DatabaseConnection implements DatabaseConnectionInterface {
     @Override
     public int getMainHallID() throws SQLException {
         int mainHallID = -1;
-        String sql = "SELECT venue_ID FROM Venues WHERE name = 'mainhall'";
+        String sql = "SELECT venue_ID FROM Venue WHERE name = 'mainhall'";
 
         try (Connection conn = connectToDatabase();
              PreparedStatement p = conn.prepareStatement(sql);
@@ -175,7 +177,7 @@ public class DatabaseConnection implements DatabaseConnectionInterface {
     @Override
     public int getSmallHallID() throws SQLException {
         int smallHallID = -1;
-        String sql = "SELECT venue_ID FROM Venues WHERE name = 'smallhall'";
+        String sql = "SELECT venue_ID FROM Venue WHERE name = 'smallhall'";
 
         try (Connection conn = connectToDatabase();
              PreparedStatement p = conn.prepareStatement(sql);
@@ -195,7 +197,7 @@ public class DatabaseConnection implements DatabaseConnectionInterface {
     //update the price of a seat
     @Override
     public void setSeatPrice(double newPrice, int venueId) throws SQLException {
-        String sql = "UPDATE Seats SET price = ? WHERE venue_id = ?";
+        String sql = "UPDATE Seat SET price = ? WHERE venue_id = ?";
         try (Connection conn = connectToDatabase();
              PreparedStatement p = conn.prepareStatement(sql)) {
             p.setDouble(1, newPrice); // Set the new price
