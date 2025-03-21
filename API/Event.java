@@ -1,5 +1,6 @@
 package API;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Event {
@@ -10,11 +11,12 @@ public class Event {
     private final String description;
     private final LocalDateTime startTime;
     private final LocalDateTime endTime;
+    private final LocalDate eventDate;
     private final int length;  // Length in minutes
 
     // Constructor
     public Event(int eventId, int venueId, int clientID, String name, String description,
-                 LocalDateTime startTime, LocalDateTime endTime, int length) {
+                 LocalDateTime startTime, LocalDateTime endTime, LocalDate eventDate, int length) {
         this.eventId = eventId;
         this.venueId = venueId;
         this.clientID = clientID;
@@ -22,6 +24,7 @@ public class Event {
         this.description = description;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.eventDate = eventDate;
         this.length = length;
     }
 

@@ -32,8 +32,7 @@ public class DatabaseConnection implements DatabaseConnectionInterface {
                         rs.getInt("venue_id"),
                         rs.getString("name"),
                         rs.getInt("capacity"),
-                        rs.getBoolean("booked"),
-                        rs.getInt("Event_ID")
+                        rs.getBoolean("booked")
                 );
                 venues.add(venue);
             }
@@ -54,13 +53,14 @@ public class DatabaseConnection implements DatabaseConnectionInterface {
 
             while (rs.next()) {
                 Event event = new Event(
-                        rs.getInt("event_id"),
-                        rs.getInt("venue_id"),
-                        rs.getInt("client_id"),
-                        rs.getString("name"),
-                        rs.getString("description"),
-                        rs.getTimestamp("start_time").toLocalDateTime(),
-                        rs.getTimestamp("end_time").toLocalDateTime(),
+                        rs.getInt("event_ID"),
+                        rs.getInt("Venue_ID"),
+                        rs.getInt("Client_ID"),
+                        rs.getString("Name"),
+                        rs.getString("Description"),
+                        rs.getTimestamp("Start_Time").toLocalDateTime(),
+                        rs.getTimestamp("End_Time").toLocalDateTime(),
+                        rs.getDate("Event_Date").toLocalDate(),
                         rs.getInt("length")
                 );
                 events.add(event);

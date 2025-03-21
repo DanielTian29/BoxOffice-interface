@@ -79,7 +79,7 @@ public class Main implements MainInterface {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM, D, yyyy, h:mm a");
         for (Venue venue : venues) {
             if (venue.getBooked() == true){
-                System.out.println("Venue " + venue.getName() + "has been booked \n" +
+                System.out.println("Venue " + venue.getName() + " has been booked \n" +
                         "The following events take place: \n");
                 for (Event event : events) {
                     if (event.getVenueId() == venue.getVenueID()) {

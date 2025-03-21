@@ -8,13 +8,11 @@ public class Venue {
     private boolean booked;
     private int capacity;
     private String name;
-    private int eventID;
-    public Venue(int venueID, String name, int capacity, Boolean booked, int eventID){
+    public Venue(int venueID, String name, int capacity, Boolean booked){
         this.venueID = venueID;
         this.name = name;
         this.capacity = capacity;
         this.booked = booked;
-        this.eventID = eventID;
     }
 
     public int getVenueID() { return venueID; }
